@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head><title>Configuracoes</title></head>
+<body>
+<div layout:fragment="conteudo">
+    <h1 class="h4 mb-3">Configuracoes financeiras</h1>
+
+    <form th:action="@{/admin/configuracoes}" th:object="${form}" method="post" class="card card-body bg-white" style="max-width: 480px;">
+        <div class="mb-3">
+            <label class="form-label">Valor da mensalidade (R$)</label>
+            <input type="number" step="0.01" min="0.01" class="form-control" th:field="*{valorMensalidade}" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Dia de vencimento (1-28)</label>
+            <input type="number" min="1" max="28" class="form-control" th:field="*{diaVencimentoMensalidade}" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Chave Pix</label>
+            <input type="text" class="form-control" th:field="*{chavePix}">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Nome do beneficiario</label>
+            <input type="text" class="form-control" th:field="*{nomeBeneficiarioPix}">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Instrucoes de pagamento</label>
+            <textarea class="form-control" th:field="*{instrucoesPagamento}" rows="3"></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Salvar</button>
+    </form>
+</div>
+</body>
+</html>

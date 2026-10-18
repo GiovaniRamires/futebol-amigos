@@ -27,13 +27,16 @@ public class ConfirmacaoPresencaService {
     private final ConfirmacaoPresencaRepository confirmacaoRepository;
     private final PartidaService partidaService;
     private final UsuarioService usuarioService;
+    private final CobrancaService cobrancaService;
 
     public ConfirmacaoPresencaService(ConfirmacaoPresencaRepository confirmacaoRepository,
                                        PartidaService partidaService,
-                                       UsuarioService usuarioService) {
+                                       UsuarioService usuarioService,
+                                       CobrancaService cobrancaService) {
         this.confirmacaoRepository = confirmacaoRepository;
         this.partidaService = partidaService;
         this.usuarioService = usuarioService;
+        this.cobrancaService = cobrancaService;
     }
 
     @Transactional
@@ -103,7 +106,11 @@ public class ConfirmacaoPresencaService {
 
         confirmacao.setStatusComparecimento(status);
         confirmacao.setAtualizadoEm(Instant.now());
-        return confirmacaoRepository.save(confirmacao);
+        ConfirmacaoPresenca salva = confirmacaoRepository.save(confirmacao);
+
+        cobrancaService.gerarDiariaSeAplicavel(partida, usuario, status);
+
+        return salva;
     }
 
     @Transactional(readOnly = true)

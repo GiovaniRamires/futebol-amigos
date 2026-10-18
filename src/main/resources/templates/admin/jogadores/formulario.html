@@ -18,6 +18,10 @@
             <input type="email" class="form-control" th:field="*{email}" required>
         </div>
         <div class="mb-3">
+            <label class="form-label">Telefone (WhatsApp)</label>
+            <input type="text" class="form-control" th:field="*{telefone}" placeholder="Ex.: 5511999998888">
+        </div>
+        <div class="mb-3">
             <label class="form-label">
                 Senha
                 <span th:if="${form.id != null}" class="text-muted small">(deixe em branco para manter a atual)</span>

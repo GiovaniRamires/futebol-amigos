@@ -47,3 +47,25 @@ Registro cronológico das etapas reais de desenvolvimento. Nada aqui é retroati
 **Pendências conhecidas:**
 - Lista de espera promovida automaticamente ao cancelar presença, mas não há notificação ao jogador promovido (fora do escopo pedido).
 - Página de detalhe da partida ainda não lista o status de comparecimento de forma tabular para registro em lote pelo admin (ação simples via formulário por jogador, suficiente para o tamanho do grupo, mas pode ser refinada).
+
+---
+
+## Etapa 4 — Financeiro
+**Data:** 2026-10-18
+**Objetivo:** mensalidades e diárias, pagamentos parciais com saldo, configuração de Pix, link de WhatsApp pré-formatado.
+
+**Alterações realizadas:**
+- `ConfiguracaoSistemaService`/`ConfiguracaoFormDto`/`ConfiguracaoAdminController`: tela de configuração de mensalidade, dia de vencimento e dados de Pix.
+- `CobrancaService`: geração de mensalidade por competência para mensalistas ativos (sem duplicar — unicidade por jogador+tipo+competência, ADR-004); geração de diária acoplada ao registro de comparecimento (`ConfirmacaoPresencaService.registrarComparecimento` agora chama `CobrancaService.gerarDiariaSeAplicavel`), só para avulsos com status COMPARECEU (ADR-005).
+- `PagamentoService`: pagamentos parciais, cálculo de saldo pendente, bloqueio de pagamento acima do saldo (`RegraNegocioException`), status da cobrança (PENDENTE/PARCIAL/PAGO) derivado automaticamente do saldo.
+- `WhatsAppLinkService`: monta link `wa.me` com mensagem pré-formatada (nome, tipo de cobrança, valor, vencimento, Pix) e `URLEncoder` para codificação correta. Não envia nada automaticamente — administrador revisa e clica manualmente.
+- Campo `telefone` adicionado a `Usuario` (migration V8) para viabilizar o link do WhatsApp.
+- `FinanceiroAdminController`/`FinanceiroJogadorController` e páginas Thymeleaf: lista financeira, detalhe de cobrança com histórico de pagamentos e registro de novo pagamento, painel "minhas cobranças" do jogador.
+
+**Testes executados:** `./mvnw.cmd test` → 27 testes, 0 falhas, 0 erros. Novos: `CobrancaServiceTest` (6 casos: mensalidade sem duplicidade, não gera para avulso, diária só com comparecimento, não gera para falta, não gera para mensalista, não duplica diária em registro repetido), `PagamentoServiceTest` (5 casos: pagamento parcial e saldo, pago ao zerar saldo, bloqueio acima do saldo total, bloqueio acima do saldo após parcial, bloqueio de valor zero/negativo), `ControleAcessoTest` (4 casos: redirect sem autenticação, bloqueio de página admin sem autenticação, 403 para jogador comum em página admin, 403 para jogador comum no financeiro admin).
+
+**Commit relacionado:** pendente de registro nesta entrada (ver seção de commits no resumo final).
+
+**Pendências conhecidas:**
+- QR Code estático do Pix (mencionado como opcional no briefing, seção 7.5) não foi implementado nesta etapa — a tela de configuração aceita apenas a chave Pix em texto. Pode ser adicionado depois sem mudança estrutural.
+- Teste de "proteção das informações financeiras" cobre controle de acesso por perfil (admin vs jogador), mas não cobre explicitamente que um jogador não acessa a cobrança de outro jogador via URL direta (`/admin/financeiro/{id}`) — essa rota já está protegida por `hasRole("ADMINISTRADOR")`, então um jogador comum não acessa nenhuma cobrança por ali; falta apenas um teste explícito de isolamento entre dois jogadores nas rotas `/jogador/financeiro` (a query já é escopada por `usuario.getId()` do principal autenticado, mas sem teste automatizado dedicado).

@@ -30,6 +30,8 @@ public class JogadorFormDto {
     @Email(message = "E-mail invalido")
     private String email;
 
+    private String telefone;
+
     /** Opcional na edicao; obrigatoria no cadastro (validado no service). */
     private String senha;
 

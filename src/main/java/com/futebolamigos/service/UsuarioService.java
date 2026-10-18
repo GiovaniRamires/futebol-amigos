@@ -64,6 +64,7 @@ public class UsuarioService {
         Usuario usuario = Usuario.builder()
                 .nome(form.getNome())
                 .email(form.getEmail())
+                .telefone(form.getTelefone())
                 .senhaHash(passwordEncoder.encode(form.getSenha()))
                 .perfil(Perfil.JOGADOR)
                 .tipoJogador(form.getTipoJogador())
@@ -80,6 +81,7 @@ public class UsuarioService {
         }
         usuario.setNome(form.getNome());
         usuario.setEmail(form.getEmail());
+        usuario.setTelefone(form.getTelefone());
         usuario.setTipoJogador(form.getTipoJogador());
         usuario.setAtivo(form.isAtivo());
         if (form.getSenha() != null && !form.getSenha().isBlank()) {

@@ -54,6 +54,7 @@ public class JogadorAdminController {
                 .id(usuario.getId())
                 .nome(usuario.getNome())
                 .email(usuario.getEmail())
+                .telefone(usuario.getTelefone())
                 .tipoJogador(usuario.getTipoJogador())
                 .ativo(usuario.isAtivo())
                 .build();

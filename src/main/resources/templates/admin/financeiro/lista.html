@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head><title>Financeiro</title></head>
+<body>
+<div layout:fragment="conteudo">
+    <h1 class="h4 mb-3">Financeiro</h1>
+
+    <form th:action="@{/admin/financeiro/mensalidades/gerar}" method="post" class="d-flex gap-2 align-items-end mb-4">
+        <div>
+            <label class="form-label small mb-0">Gerar mensalidades da competencia</label>
+            <input type="month" name="competencia" th:value="${competenciaAtual}" class="form-control form-control-sm" required>
+        </div>
+        <button type="submit" class="btn btn-sm btn-primary">Gerar</button>
+    </form>
+
+    <div class="table-responsive">
+        <table class="table table-sm bg-white align-middle">
+            <thead>
+            <tr><th>Jogador</th><th>Tipo</th><th>Competencia</th><th>Valor</th><th>Vencimento</th><th>Status</th><th></th></tr>
+            </thead>
+            <tbody>
+            <tr th:each="c : ${cobrancas}">
+                <td th:text="${c.usuario.nome}"></td>
+                <td th:text="${c.tipo}"></td>
+                <td th:text="${c.competencia}"></td>
+                <td th:text="${'R$ ' + #numbers.formatDecimal(c.valor, 1, 2)}"></td>
+                <td th:text="${#temporals.format(c.vencimento, 'dd/MM/yyyy')}"></td>
+                <td>
+                    <span th:class="${c.status.name() == 'PAGO'} ? 'badge bg-success' : (${c.status.name() == 'PARCIAL'} ? 'badge bg-warning text-dark' : 'badge bg-secondary')"
+                          th:text="${c.status}"></span>
+                </td>
+                <td class="text-end">
+                    <a th:href="@{/admin/financeiro/{id}(id=${c.id})}" class="btn btn-sm btn-outline-primary">Abrir</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head><title>Meu financeiro</title></head>
+<body>
+<div layout:fragment="conteudo">
+    <h1 class="h4 mb-3">Minhas cobrancas</h1>
+
+    <div class="table-responsive">
+        <table class="table table-sm bg-white align-middle">
+            <thead><tr><th>Tipo</th><th>Competencia</th><th>Valor</th><th>Vencimento</th><th>Status</th></tr></thead>
+            <tbody>
+            <tr th:each="c : ${cobrancas}">
+                <td th:text="${c.tipo}"></td>
+                <td th:text="${c.competencia}"></td>
+                <td th:text="${'R$ ' + #numbers.formatDecimal(c.valor, 1, 2)}"></td>
+                <td th:text="${#temporals.format(c.vencimento, 'dd/MM/yyyy')}"></td>
+                <td>
+                    <span th:class="${c.status.name() == 'PAGO'} ? 'badge bg-success' : (${c.status.name() == 'PARCIAL'} ? 'badge bg-warning text-dark' : 'badge bg-secondary')"
+                          th:text="${c.status}"></span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <p th:if="${#lists.isEmpty(cobrancas)}" class="text-muted">Nenhuma cobranca registrada ate o momento.</p>
+    </div>
+</div>
+</body>
+</html>
