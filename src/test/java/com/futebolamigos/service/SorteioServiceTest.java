@@ -140,6 +140,20 @@ class SorteioServiceTest {
 
         List<Sorteio> historico = sorteioService.historicoPorPartida(partida.getId());
         assertThat(historico).hasSize(2);
+
+        // Simula o acesso feito pela view (admin/partidas/sorteio.html):
+        // sorteio.times -> time.participacoes -> p.usuario.nome, fora de
+        // qualquer transacao aberta pelo controller. Sem o fetch correto em
+        // historicoPorPartida, isso lanca LazyInitializationException.
+        for (Sorteio sorteio : historico) {
+            assertThat(sorteio.getTimes()).isNotEmpty();
+            for (var time : sorteio.getTimes()) {
+                assertThat(time.getParticipacoes()).isNotEmpty();
+                for (var participacao : time.getParticipacoes()) {
+                    assertThat(participacao.getUsuario().getNome()).isNotBlank();
+                }
+            }
+        }
     }
 
     @Test

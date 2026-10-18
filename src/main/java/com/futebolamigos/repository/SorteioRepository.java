@@ -27,4 +27,7 @@ public interface SorteioRepository extends JpaRepository<Sorteio, Long> {
 
     @Query("SELECT DISTINCT s FROM Sorteio s LEFT JOIN FETCH s.times WHERE s.partida.id = :partidaId AND s.publicado = true")
     Optional<Sorteio> findPublicadoComTimesByPartidaId(@Param("partidaId") Long partidaId);
+
+    @Query("SELECT DISTINCT s FROM Sorteio s LEFT JOIN FETCH s.times WHERE s.partida.id = :partidaId ORDER BY s.criadoEm DESC")
+    List<Sorteio> findAllComTimesByPartidaIdOrderByCriadoEmDesc(@Param("partidaId") Long partidaId);
 }
