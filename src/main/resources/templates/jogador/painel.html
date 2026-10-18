@@ -5,7 +5,20 @@
 <body>
 <div layout:fragment="conteudo">
     <h1 class="h4 mb-4">Meu painel</h1>
-    <p class="text-muted">Confirmacao de presenca, times publicados e financeiro estarao disponiveis aqui nas proximas etapas.</p>
+    <div class="row g-3">
+        <div class="col-md-6">
+            <a th:href="@{/jogador/proxima-partida}" class="card text-decoration-none text-dark card-body h-100">
+                <h2 class="h6">Proxima partida</h2>
+                <p class="text-muted small mb-0">Confirme presenca e veja os times publicados.</p>
+            </a>
+        </div>
+        <div class="col-md-6">
+            <a th:href="@{/jogador/financeiro}" class="card text-decoration-none text-dark card-body h-100">
+                <h2 class="h6">Minhas cobrancas</h2>
+                <p class="text-muted small mb-0">Mensalidades, diarias e status de pagamento.</p>
+            </a>
+        </div>
+    </div>
 </div>
 </body>
 </html>

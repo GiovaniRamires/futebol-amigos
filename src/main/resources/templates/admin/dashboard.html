@@ -13,16 +13,22 @@
             </a>
         </div>
         <div class="col-md-4">
-            <div class="card card-body h-100 text-muted">
+            <a th:href="@{/admin/partidas}" class="card text-decoration-none text-dark card-body h-100">
                 <h2 class="h6">Partidas</h2>
-                <p class="small mb-0">Em desenvolvimento (Etapa 3).</p>
-            </div>
+                <p class="text-muted small mb-0">Criar partidas, registrar presenca e comparecimento, sortear e publicar os times.</p>
+            </a>
         </div>
         <div class="col-md-4">
-            <div class="card card-body h-100 text-muted">
+            <a th:href="@{/admin/financeiro}" class="card text-decoration-none text-dark card-body h-100">
                 <h2 class="h6">Financeiro</h2>
-                <p class="small mb-0">Em desenvolvimento (Etapa 4).</p>
-            </div>
+                <p class="text-muted small mb-0">Mensalidades, diarias, pagamentos e saldo.</p>
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a th:href="@{/admin/configuracoes}" class="card text-decoration-none text-dark card-body h-100">
+                <h2 class="h6">Configuracoes</h2>
+                <p class="text-muted small mb-0">Valor da mensalidade, vencimento e dados de Pix.</p>
+            </a>
         </div>
     </div>
 </div>

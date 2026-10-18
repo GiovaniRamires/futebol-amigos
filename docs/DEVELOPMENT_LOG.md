@@ -69,3 +69,25 @@ Registro cronológico das etapas reais de desenvolvimento. Nada aqui é retroati
 **Pendências conhecidas:**
 - QR Code estático do Pix (mencionado como opcional no briefing, seção 7.5) não foi implementado nesta etapa — a tela de configuração aceita apenas a chave Pix em texto. Pode ser adicionado depois sem mudança estrutural.
 - Teste de "proteção das informações financeiras" cobre controle de acesso por perfil (admin vs jogador), mas não cobre explicitamente que um jogador não acessa a cobrança de outro jogador via URL direta (`/admin/financeiro/{id}`) — essa rota já está protegida por `hasRole("ADMINISTRADOR")`, então um jogador comum não acessa nenhuma cobrança por ali; falta apenas um teste explícito de isolamento entre dois jogadores nas rotas `/jogador/financeiro` (a query já é escopada por `usuario.getId()` do principal autenticado, mas sem teste automatizado dedicado).
+
+---
+
+## Etapa 5 — Integração, Docker e documentação final
+**Data:** 2026-10-18
+**Objetivo:** ligar a navegação entre os módulos, preparar execução via Docker, escrever README e documentação de uso de agentes de IA.
+
+**Alterações realizadas:**
+- Dashboard administrativo e painel do jogador atualizados: cards "em desenvolvimento" substituídos por links reais para Partidas, Financeiro, Configurações (admin) e Próxima partida/Financeiro (jogador).
+- `Dockerfile` (build multi-stage com Maven Wrapper, runtime `eclipse-temurin:21-jre`), `compose.yaml` (app + MySQL 8 com healthcheck), `.env.example` sem credenciais reais.
+- `.gitignore` atualizado para excluir `.env`/`.env.local`/chaves privadas.
+- `README.md` completo: problema, público-alvo, funcionalidades, tecnologias, arquitetura resumida, instruções de execução (Docker e Maven Wrapper local), configuração do MySQL, criação do primeiro administrador, execução de testes, status real do desenvolvimento, limitações declaradas.
+- `docs/AI_WORKFLOW.md`: relato honesto do uso do Kiro Crew, incluindo a decisão de não paralelizar a escrita de código do monólito, os problemas reais encontrados (Spring Initializr recusando Boot 3.x, ambiente sem Docker/Maven/gh, bug de ambiguidade de construtor, bloqueio de push a `main`) e as decisões que exigiram validação humana.
+
+**Testes executados:** `./mvnw.cmd test` → 27 testes, 0 falhas, 0 erros (suíte completa inalterada nesta etapa, apenas documentação/infra/navegação).
+
+**Commit relacionado:** pendente de registro nesta entrada (ver seção de commits no resumo final).
+
+**Pendências conhecidas:**
+- `Dockerfile`/`compose.yaml` **não executados** nesta sessão (ambiente sem Docker) — validação em máquina com Docker é um próximo passo necessário antes de declarar a via Docker como comprovadamente funcional.
+- Capturas de tela da aplicação ainda não foram produzidas (dependem de execução visual da aplicação, não realizada nesta sessão).
+- Aplicação não publicada em nenhuma hospedagem externa.
