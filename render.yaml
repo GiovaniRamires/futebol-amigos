@@ -4,6 +4,16 @@
 # Limitacao do free tier: o Web Service "dorme" apos 15 min sem trafego
 # (a proxima requisicao demora ~30-60s para acordar); o banco free expira
 # apos 90 dias de inatividade de criacao (nao de uso) e precisa ser recriado.
+#
+# Nota sobre a porta: o Render injeta a variavel PORT automaticamente e
+# espera que o processo escute nela. application.properties ja prioriza
+# PORT sobre SERVER_PORT (server.port=${PORT:${SERVER_PORT:8080}}), entao
+# nenhuma variavel de porta precisa ser definida aqui.
+#
+# ADMIN_SENHA: defina manualmente apos o primeiro deploy (Environment do
+# Web Service). Se deixar em branco, a aplicacao gera uma senha aleatoria
+# segura e a imprime UMA UNICA VEZ nos logs do primeiro boot (nunca usa
+# uma senha fraca por padrao).
 
 databases:
   - name: futebol-amigos-db
@@ -44,5 +54,3 @@ services:
         sync: false
       - key: ADMIN_SENHA
         sync: false
-      - key: SERVER_PORT
-        value: 8080

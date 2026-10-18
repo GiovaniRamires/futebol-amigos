@@ -7,7 +7,7 @@ CREATE TABLE partida (
     limite_participantes    INT             NOT NULL,
     valor_diaria            DECIMAL(10,2)   NOT NULL,
     cancelada               BOOLEAN         NOT NULL DEFAULT FALSE,
-    criado_em               TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP
+    criado_em               TIMESTAMP WITH TIME ZONE   NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE INDEX idx_partida_data_hora ON partida (data_hora);

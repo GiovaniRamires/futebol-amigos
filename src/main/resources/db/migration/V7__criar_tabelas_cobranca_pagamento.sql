@@ -9,7 +9,7 @@ CREATE TABLE cobranca (
     valor           DECIMAL(10,2)   NOT NULL,
     vencimento      DATE            NOT NULL,
     status          VARCHAR(20)     NOT NULL DEFAULT 'PENDENTE',
-    criado_em       TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    criado_em       TIMESTAMP WITH TIME ZONE   NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT uk_cobranca_usuario_tipo_competencia_partida
         UNIQUE (usuario_id, tipo, competencia, partida_id),
     CONSTRAINT fk_cobranca_usuario FOREIGN KEY (usuario_id) REFERENCES usuario (id),
@@ -23,7 +23,7 @@ CREATE TABLE pagamento (
     data_pagamento      DATE            NOT NULL,
     metodo              VARCHAR(20)     NOT NULL,
     registrado_por_id   BIGINT          NOT NULL,
-    criado_em           TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    criado_em           TIMESTAMP WITH TIME ZONE   NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_pagamento_cobranca FOREIGN KEY (cobranca_id) REFERENCES cobranca (id),
     CONSTRAINT fk_pagamento_registrado_por FOREIGN KEY (registrado_por_id) REFERENCES usuario (id)
 );

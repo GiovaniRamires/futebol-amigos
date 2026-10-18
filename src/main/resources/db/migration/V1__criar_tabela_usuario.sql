@@ -8,6 +8,6 @@ CREATE TABLE usuario (
     perfil          VARCHAR(20)     NOT NULL,
     tipo_jogador    VARCHAR(20)     NOT NULL,
     ativo           BOOLEAN         NOT NULL DEFAULT TRUE,
-    criado_em       TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    criado_em       TIMESTAMP WITH TIME ZONE   NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT uk_usuario_email UNIQUE (email)
 );

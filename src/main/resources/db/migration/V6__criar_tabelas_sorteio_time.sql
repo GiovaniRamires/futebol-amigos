@@ -4,7 +4,7 @@ CREATE TABLE sorteio (
     id              BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     partida_id      BIGINT          NOT NULL,
     publicado       BOOLEAN         NOT NULL DEFAULT FALSE,
-    criado_em       TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    criado_em       TIMESTAMP WITH TIME ZONE   NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_sorteio_partida FOREIGN KEY (partida_id) REFERENCES partida (id)
 );
 

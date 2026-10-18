@@ -102,7 +102,7 @@ Depois do primeiro login, use a tela **Jogadores** para cadastrar os demais admi
 .\mvnw.cmd test   # Windows
 ```
 
-Os testes usam um perfil `test` com H2 em memória em modo de compatibilidade MySQL (não Testcontainers) — ver [`docs/DECISIONS.md`](docs/DECISIONS.md) ADR-008 para a justificativa e a limitação conhecida dessa escolha.
+Os testes usam um perfil `test` com H2 em memória em modo de compatibilidade PostgreSQL (não Testcontainers) — ver [`docs/DECISIONS.md`](docs/DECISIONS.md) ADR-008 para a justificativa e a limitação conhecida dessa escolha.
 
 Estado real na última execução registrada: **27 testes, 0 falhas, 0 erros** (ver [`docs/DEVELOPMENT_LOG.md`](docs/DEVELOPMENT_LOG.md) para o detalhamento por etapa).
 
