@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head><title>Partidas</title></head>
+<body>
+<div layout:fragment="conteudo">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h4 mb-0">Partidas</h1>
+        <a th:href="@{/admin/partidas/novo}" class="btn btn-primary btn-sm">+ Nova partida</a>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-sm align-middle bg-white">
+            <thead>
+            <tr>
+                <th>Data/Hora</th>
+                <th>Local</th>
+                <th>Limite</th>
+                <th>Diaria</th>
+                <th>Status</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="p : ${partidas}">
+                <td th:text="${#temporals.format(p.dataHora, 'dd/MM/yyyy HH:mm')}"></td>
+                <td th:text="${p.local}"></td>
+                <td th:text="${p.limiteParticipantes}"></td>
+                <td th:text="${'R$ ' + #numbers.formatDecimal(p.valorDiaria, 1, 2)}"></td>
+                <td>
+                    <span th:if="${p.cancelada}" class="badge bg-danger">Cancelada</span>
+                    <span th:unless="${p.cancelada}" class="badge bg-success">Ativa</span>
+                </td>
+                <td class="text-end">
+                    <a th:href="@{/admin/partidas/{id}(id=${p.id})}" class="btn btn-sm btn-outline-primary">Abrir</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

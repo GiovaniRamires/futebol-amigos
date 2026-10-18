@@ -23,4 +23,27 @@ Registro cronológico das etapas reais de desenvolvimento. Nada aqui é retroati
 
 **Pendências conhecidas:**
 - Docker não disponível neste ambiente de execução dos agentes — `Dockerfile`/`compose.yaml` serão criados mas não puderam ser executados/validados localmente nesta sessão. Isso será declarado com honestidade no README.
-- `gh` CLI indisponível — push ao GitHub será feito via `git push` HTTPS padrão; credenciais de push ainda não testadas com conteúdo real.
+- `gh` CLI indisponível — push ao GitHub foi feito via `git push` HTTPS padrão.
+- **Push para `main` bloqueado pela política de segurança do Kiro Crew** (regra `git-publish-push-protected-branch-name`), mesmo com `main` remoto ainda vazio. Os 3 commits iniciais foram enviados para a branch `feature/bootstrap-projeto` (`git push -u origin feature/bootstrap-projeto`, bem-sucedido). **Giovani precisa abrir o Pull Request de `feature/bootstrap-projeto` para `main` no GitHub e mergear manualmente**, ou autorizar explicitamente um push direto a `main` para este caso específico de bootstrap de repositório vazio.
+
+---
+
+## Etapa 3 — Partidas, presença, seleção e sorteio
+**Data:** 2026-10-18
+**Objetivo:** implementar partidas, confirmação de presença (com lista de espera), a regra central de seleção explícita para o sorteio, e o sorteio aleatório com times equilibrados e histórico.
+
+**Alterações realizadas:**
+- `PartidaService`/`PartidaFormDto`/`PartidaAdminController`: CRUD de partidas (criar, editar, cancelar).
+- `ConfirmacaoPresencaService`: confirmação/cancelamento de presença pelo jogador, com promoção automática da lista de espera quando uma vaga se abre; registro de comparecimento efetivo (compareceu/faltou/atrasado) pelo administrador, independente da confirmação prévia.
+- `SelecaoSorteioService`: seleção explícita do administrador — única fonte de elegibilidade para o sorteio. Exige justificativa obrigatória para incluir jogador sem confirmação prévia.
+- `SorteioService`: sorteio aleatório (`Collections.shuffle`) dividindo os selecionados em exatamente 2 times com diferença máxima de 1 jogador; histórico preservado (não apaga sorteios antigos); `refazer()` bloqueado se o último sorteio já foi publicado; `publicar()` despublica qualquer sorteio anterior da mesma partida.
+- Controllers e páginas Thymeleaf correspondentes (lista/detalhe/formulário de partida, seleção, sorteio, painel do jogador com próxima partida e times publicados).
+- Bug corrigido durante a implementação: `SorteioService` tinha dois construtores (produção + teste) sem `@Autowired` explícito, causando `NoSuchMethodException` no boot do contexto Spring — corrigido anotando o construtor de produção com `@Autowired`.
+
+**Testes executados:** `./mvnw.cmd test` → 12 testes, 0 falhas, 0 erros (`FutebolAmigosApplicationTests`: 1, `UsuarioServiceTest`: 4, `SorteioServiceTest`: 7). `SorteioServiceTest` cobre explicitamente: confirmação isolada não torna elegível; inclusão sem confirmação exige justificativa; sorteio com menos de 2 selecionados é rejeitado; times equilibrados sem duplicados; histórico preservado ao refazer; sorteio publicado não pode ser refeito.
+
+**Commit relacionado:** pendente de registro nesta entrada (ver seção de commits no resumo final).
+
+**Pendências conhecidas:**
+- Lista de espera promovida automaticamente ao cancelar presença, mas não há notificação ao jogador promovido (fora do escopo pedido).
+- Página de detalhe da partida ainda não lista o status de comparecimento de forma tabular para registro em lote pelo admin (ação simples via formulário por jogador, suficiente para o tamanho do grupo, mas pode ser refinada).

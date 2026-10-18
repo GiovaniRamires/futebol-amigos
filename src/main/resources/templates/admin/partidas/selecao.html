@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head><title>Selecao para o sorteio</title></head>
+<body>
+<div layout:fragment="conteudo">
+    <h1 class="h4 mb-3">Selecao para o sorteio</h1>
+    <p class="text-muted small">
+        A confirmacao de presenca NAO torna o jogador elegivel automaticamente.
+        Selecione explicitamente quem participa do sorteio desta partida.
+    </p>
+
+    <div class="row g-4">
+        <div class="col-md-6">
+            <h2 class="h6">Jogadores e status de presenca</h2>
+            <div class="table-responsive">
+                <table class="table table-sm bg-white">
+                    <thead><tr><th>Jogador</th><th>Confirmacao</th><th>Comparecimento</th><th></th></tr></thead>
+                    <tbody>
+                    <tr th:each="c : ${statusPresenca}">
+                        <td th:text="${c.usuario.nome}"></td>
+                        <td th:text="${c.status}"></td>
+                        <td th:text="${c.statusComparecimento}"></td>
+                        <td>
+                            <form th:action="@{/admin/partidas/{pid}/selecao/{uid}/incluir(pid=${partidaId},uid=${c.usuario.id})}" method="post" class="d-inline">
+                                <input type="text" name="justificativaExcecao" placeholder="Justificativa (se sem confirmacao)" class="form-control form-control-sm d-inline w-auto" style="max-width: 220px;">
+                                <button type="submit" class="btn btn-sm btn-outline-primary">Incluir</button>
+                            </form>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <h2 class="h6">Selecionados para o sorteio (<span th:text="${#lists.size(selecionados)}"></span>)</h2>
+            <ul class="list-group">
+                <li class="list-group-item d-flex justify-content-between align-items-center" th:each="s : ${selecionados}">
+                    <span>
+                        <span th:text="${s.usuario.nome}"></span>
+                        <span th:if="${s.justificativaExcecao != null}" class="badge bg-warning text-dark ms-1" th:title="${s.justificativaExcecao}">excecao</span>
+                    </span>
+                    <form th:action="@{/admin/partidas/{pid}/selecao/{uid}/remover(pid=${partidaId},uid=${s.usuario.id})}" method="post">
+                        <button type="submit" class="btn btn-sm btn-outline-danger">Remover</button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <a th:href="@{/admin/partidas/{id}/sorteio(id=${partidaId})}" class="btn btn-primary mt-4">Ir para o sorteio</a>
+</div>
+</body>
+</html>

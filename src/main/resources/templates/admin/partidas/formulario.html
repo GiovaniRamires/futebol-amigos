@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head><title>Partida</title></head>
+<body>
+<div layout:fragment="conteudo">
+    <h1 class="h4 mb-3" th:text="${form.id != null} ? 'Editar partida' : 'Nova partida'"></h1>
+
+    <form th:action="${form.id != null} ? @{/admin/partidas/{id}(id=${form.id})} : @{/admin/partidas}"
+          th:object="${form}" method="post" class="card card-body bg-white" style="max-width: 480px;">
+
+        <div class="mb-3">
+            <label class="form-label">Data e horario</label>
+            <input type="datetime-local" class="form-control" th:field="*{dataHora}" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Local</label>
+            <input type="text" class="form-control" th:field="*{local}" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Limite de participantes</label>
+            <input type="number" min="1" class="form-control" th:field="*{limiteParticipantes}" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Valor da diaria (R$)</label>
+            <input type="number" step="0.01" min="0.01" class="form-control" th:field="*{valorDiaria}" required>
+        </div>
+
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">Salvar</button>
+            <a th:href="@{/admin/partidas}" class="btn btn-outline-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head><title>Detalhe da partida</title></head>
+<body>
+<div layout:fragment="conteudo">
+    <div class="d-flex justify-content-between align-items-start mb-3">
+        <div>
+            <h1 class="h4 mb-1" th:text="${partida.local}"></h1>
+            <p class="text-muted mb-0" th:text="${#temporals.format(partida.dataHora, 'dd/MM/yyyy HH:mm')}"></p>
+        </div>
+        <span th:if="${partida.cancelada}" class="badge bg-danger align-self-center">Cancelada</span>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <a th:href="@{/admin/partidas/{id}/editar(id=${partida.id})}" class="card card-body h-100 text-decoration-none text-dark">
+                <h2 class="h6">Editar partida</h2>
+                <p class="small text-muted mb-0">Data, local, limite e valor da diaria.</p>
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a th:href="@{/admin/partidas/{id}/selecao(id=${partida.id})}" class="card card-body h-100 text-decoration-none text-dark">
+                <h2 class="h6">Selecionar para o sorteio</h2>
+                <p class="small text-muted mb-0">Seleciona explicitamente quem participa do sorteio.</p>
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a th:href="@{/admin/partidas/{id}/sorteio(id=${partida.id})}" class="card card-body h-100 text-decoration-none text-dark">
+                <h2 class="h6">Sorteio e publicacao</h2>
+                <p class="small text-muted mb-0">Realiza o sorteio e publica os times.</p>
+            </a>
+        </div>
+    </div>
+
+    <form th:if="${!partida.cancelada}" th:action="@{/admin/partidas/{id}/cancelar(id=${partida.id})}" method="post"
+          onsubmit="return confirm('Cancelar esta partida?');">
+        <button type="submit" class="btn btn-sm btn-outline-danger">Cancelar partida</button>
+    </form>
+</div>
+</body>
+</html>

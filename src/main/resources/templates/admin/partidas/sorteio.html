@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head><title>Sorteio</title></head>
+<body>
+<div layout:fragment="conteudo">
+    <h1 class="h4 mb-3">Sorteio e publicacao dos times</h1>
+
+    <div class="d-flex gap-2 mb-4">
+        <form th:action="@{/admin/partidas/{id}/sorteio/sortear(id=${partidaId})}" method="post">
+            <button type="submit" class="btn btn-primary">Sortear</button>
+        </form>
+        <form th:if="${!#lists.isEmpty(historico)}" th:action="@{/admin/partidas/{id}/sorteio/refazer(id=${partidaId})}" method="post">
+            <button type="submit" class="btn btn-outline-secondary">Refazer sorteio</button>
+        </form>
+    </div>
+
+    <div th:each="sorteio, iter : ${historico}" class="card card-body bg-white mb-3">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <h2 class="h6 mb-0">
+                Sorteio <span th:text="${#temporals.format(sorteio.criadoEm, 'dd/MM/yyyy HH:mm')}"></span>
+                <span th:if="${sorteio.publicado}" class="badge bg-success ms-2">Publicado</span>
+            </h2>
+            <form th:unless="${sorteio.publicado}" th:action="@{/admin/partidas/{pid}/sorteio/{sid}/publicar(pid=${partidaId},sid=${sorteio.id})}" method="post">
+                <button type="submit" class="btn btn-sm btn-success">Publicar</button>
+            </form>
+        </div>
+        <div class="row">
+            <div class="col-6" th:each="time : ${sorteio.times}">
+                <strong th:text="${time.nome}"></strong>
+                <ul class="mb-0">
+                    <li th:each="p : ${time.participacoes}" th:text="${p.usuario.nome}"></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <p th:if="${#lists.isEmpty(historico)}" class="text-muted">Nenhum sorteio realizado ainda para esta partida.</p>
+</div>
+</body>
+</html>
