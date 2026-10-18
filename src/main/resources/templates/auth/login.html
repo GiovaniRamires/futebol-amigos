@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>Entrar</title>
+</head>
+<body>
+<div layout:fragment="conteudo" class="d-flex align-items-center justify-content-center" style="min-height: 80vh;">
+    <div class="card shadow-sm" style="max-width: 380px; width: 100%;">
+        <div class="card-body p-4">
+            <h1 class="h4 mb-3 text-center">⚽ Futebol Amigos</h1>
+
+            <div th:if="${param.erro}" class="alert alert-danger py-2">E-mail ou senha invalidos.</div>
+            <div th:if="${param.logout}" class="alert alert-success py-2">Sessao finalizada.</div>
+
+            <form th:action="@{/login}" method="post">
+                <div class="mb-3">
+                    <label for="username" class="form-label">E-mail</label>
+                    <input type="email" class="form-control" id="username" name="username" required autofocus>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Senha</label>
+                    <input type="password" class="form-control" id="password" name="password" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Entrar</button>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head><title>Jogador</title></head>
+<body>
+<div layout:fragment="conteudo">
+    <h1 class="h4 mb-3" th:text="${form.id != null} ? 'Editar jogador' : 'Novo jogador'"></h1>
+
+    <form th:action="${form.id != null} ? @{/admin/jogadores/{id}(id=${form.id})} : @{/admin/jogadores}"
+          th:object="${form}" method="post" class="card card-body bg-white" style="max-width: 480px;">
+
+        <div class="mb-3">
+            <label class="form-label">Nome</label>
+            <input type="text" class="form-control" th:field="*{nome}" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">E-mail</label>
+            <input type="email" class="form-control" th:field="*{email}" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">
+                Senha
+                <span th:if="${form.id != null}" class="text-muted small">(deixe em branco para manter a atual)</span>
+            </label>
+            <input type="password" class="form-control" th:field="*{senha}">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Tipo de jogador</label>
+            <select class="form-select" th:field="*{tipoJogador}">
+                <option value="MENSALISTA">Mensalista</option>
+                <option value="AVULSO">Avulso</option>
+            </select>
+        </div>
+        <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" th:field="*{ativo}" id="ativo">
+            <label class="form-check-label" for="ativo">Ativo</label>
+        </div>
+
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">Salvar</button>
+            <a th:href="@{/admin/jogadores}" class="btn btn-outline-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+</body>
+</html>

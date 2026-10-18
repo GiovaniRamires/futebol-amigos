@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head><title>Dashboard</title></head>
+<body>
+<div layout:fragment="conteudo">
+    <h1 class="h4 mb-4">Dashboard do administrador</h1>
+    <div class="row g-3">
+        <div class="col-md-4">
+            <a th:href="@{/admin/jogadores}" class="card text-decoration-none text-dark card-body h-100">
+                <h2 class="h6">Jogadores</h2>
+                <p class="text-muted small mb-0">Cadastrar, editar, ativar e desativar jogadores.</p>
+            </a>
+        </div>
+        <div class="col-md-4">
+            <div class="card card-body h-100 text-muted">
+                <h2 class="h6">Partidas</h2>
+                <p class="small mb-0">Em desenvolvimento (Etapa 3).</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card card-body h-100 text-muted">
+                <h2 class="h6">Financeiro</h2>
+                <p class="small mb-0">Em desenvolvimento (Etapa 4).</p>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head><title>Erro</title></head>
+<body>
+<div layout:fragment="conteudo">
+    <div class="alert alert-warning">
+        <h4 class="alert-heading">Nao foi possivel completar a operacao</h4>
+        <p th:text="${mensagem}">Mensagem de erro</p>
+        <hr>
+        <a th:href="@{/painel}" class="btn btn-sm btn-outline-secondary">Voltar ao painel</a>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head><title>Acesso negado</title></head>
+<body>
+<div layout:fragment="conteudo">
+    <div class="alert alert-danger">
+        <h4 class="alert-heading">Acesso negado</h4>
+        <p>Voce nao tem permissao para acessar esta pagina.</p>
+        <a th:href="@{/painel}" class="btn btn-sm btn-outline-secondary">Voltar ao painel</a>
+    </div>
+</div>
+</body>
+</html>
