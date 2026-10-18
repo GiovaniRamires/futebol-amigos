@@ -38,10 +38,15 @@
 **Decisão:** uma aplicação Spring Boot MVC + Thymeleaf server-side rendering, MySQL único, sem filas, sem cache distribuído.
 **Contexto:** exigência explícita do briefing (seção 3) e adequação ao tamanho real do grupo de usuários (um grupo pequeno de amigos).
 
-## ADR-008: Ambiente de testes usa H2 em modo MySQL (nao Testcontainers)
-**Decisão:** os testes de integracao usam H2 em memoria com `MODE=MySQL`, em vez de Testcontainers com um MySQL real.
-**Contexto:** o ambiente de execucao dos agentes de IA (esta maquina) nao possui Docker instalado, o que torna Testcontainers inviavel aqui. A aplicacao de producao continua configurada para MySQL 8 real (`application.properties`); apenas o profile `test` (`application-test.properties`) usa H2.
-**Consequência e limitação conhecida:** H2 em modo MySQL cobre a grande maioria dos casos (tipos, constraints, Flyway), mas nao e MySQL real — diferencas finas de dialeto SQL podem nao ser detectadas pelos testes. Isso e uma limitação conhecida e documentada, não uma validação completa contra MySQL. Recomenda-se, antes de publicar/produzir, rodar `./mvnw verify` uma vez com Testcontainers (ou MySQL local via Docker) em uma maquina que tenha Docker disponivel — ver README.
+## ADR-008: Ambiente de testes usa H2 em modo PostgreSQL (nao Testcontainers)
+**Decisão:** os testes de integracao usam H2 em memoria com `MODE=PostgreSQL`, em vez de Testcontainers com um PostgreSQL real.
+**Contexto:** o ambiente de execucao dos agentes de IA (esta maquina) nao possui Docker instalado por padrao, o que tornava Testcontainers inviavel na maior parte das sessoes. A aplicacao de producao roda contra PostgreSQL real (`application.properties`); apenas o profile `test` (`application-test.properties`) usa H2.
+**Consequência e limitação conhecida:** H2 em modo PostgreSQL cobre a grande maioria dos casos (tipos, constraints, Flyway), mas nao e PostgreSQL real — diferencas finas de dialeto SQL podem nao ser detectadas pelos testes. Isso e uma limitação conhecida e documentada, não uma validação completa contra PostgreSQL.
+
+## ADR-011: Migração de MySQL para PostgreSQL (hospedagem gratuita no Render)
+**Decisão:** trocar o banco de produção de MySQL 8 para PostgreSQL 16, mantendo o H2 nos testes (agora em `MODE=PostgreSQL`, antes `MODE=MySQL`).
+**Contexto:** o usuário queria hospedar o backend gratuitamente (sem cartão de crédito). O Render oferece Web Service + PostgreSQL gerenciado no plano free; não oferece MySQL gratuito. As migrations Flyway (V1-V9) usavam apenas sintaxe MySQL-específica simples (`AUTO_INCREMENT`, `ENGINE=InnoDB DEFAULT CHARSET=utf8mb4`), sem stored procedures nem recursos exóticos — a conversão para sintaxe SQL padrão (`GENERATED ALWAYS AS IDENTITY`) foi direta.
+**Consequência:** `pom.xml` troca `mysql-connector-j`/`flyway-mysql` por `postgresql`/`flyway-database-postgresql`; `compose.yaml` troca o serviço `mysql:8.0` por `postgres:16`; `render.yaml` novo define o Blueprint de deploy. Validado nesta sessão com `docker compose up --build` real (Docker disponível na máquina): as 9 migrations aplicaram com sucesso contra PostgreSQL 16.15 real, e `GET /login` respondeu 200. A suíte completa (`./mvnw clean verify`, H2 `MODE=PostgreSQL`) permanece em 32/32 testes passando, mesma contagem de antes da migração.
 
 ## ADR-009: Papéis de "agentes" dentro do Kiro Crew
 **Decisão:** uma única sessão de agente conduz o desenvolvimento ponta a ponta (planejamento, implementação, revisão), documentando explicitamente qual "chapéu" está sendo usado em cada etapa, em vez de instanciar 5 subagentes persistentes e paralelos.

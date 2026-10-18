@@ -21,7 +21,7 @@ Regra central: **a confirmação de presença, isoladamente, nunca torna o jogad
 
 ## Tecnologias
 
-Java 21 · Spring Boot 4.1.1 · Spring MVC · Thymeleaf · Spring Data JPA/Hibernate · MySQL 8 · Flyway · Spring Security · Bean Validation · Lombok · JUnit 5 · Mockito/AssertJ · Maven (com Maven Wrapper) · Docker/Docker Compose · Bootstrap 5.
+Java 21 · Spring Boot 4.1.1 · Spring MVC · Thymeleaf · Spring Data JPA/Hibernate · PostgreSQL 16 · Flyway · Spring Security · Bean Validation · Lombok · JUnit 5 · Mockito/AssertJ · Maven (com Maven Wrapper) · Docker/Docker Compose · Bootstrap 5.
 
 > **Nota sobre a versão do Spring Boot:** o plano original pedia Spring Boot 3.x. Em outubro de 2026 a linha 3.x já estava fora de suporte OSS e o Spring Initializr público já recusava gerar projetos 3.x. Optou-se por Spring Boot 4.1.1 (decisão autorizada explicitamente durante o desenvolvimento) — ver [`docs/DECISIONS.md`](docs/DECISIONS.md) ADR-001.
 
@@ -39,20 +39,20 @@ cp .env.example .env
 docker compose up --build
 ```
 
-A aplicação sobe em `http://localhost:8080`, com MySQL 8 em um container próprio (dados persistidos em volume Docker).
+A aplicação sobe em `http://localhost:8080`, com PostgreSQL 16 em um container próprio (dados persistidos em volume Docker).
 
-> ⚠️ **Limitação conhecida e declarada com honestidade:** o `Dockerfile`/`compose.yaml` foram escritos e revisados, mas **não puderam ser executados nem validados nesta sessão de desenvolvimento**, porque o ambiente onde os agentes de IA trabalharam não tinha Docker instalado. Antes de considerar esta via validada, execute `docker compose up --build` em uma máquina com Docker e confirme que a aplicação sobe e persiste dados corretamente.
+> Validado nesta máquina com Docker real: `docker compose up --build` builda a imagem, aplica as 9 migrations Flyway contra o PostgreSQL do container e expõe `/login` com status 200.
 
-### Opção 2 — Maven Wrapper + MySQL local
+### Opção 2 — Maven Wrapper + PostgreSQL local
 
-Pré-requisitos: Java 21, um MySQL 8 acessível (local ou remoto).
+Pré-requisitos: Java 21, um PostgreSQL 16 acessível (local ou remoto).
 
 ```bash
-# cria o banco (ajuste usuário/senha conforme seu MySQL)
-mysql -u root -p -e "CREATE DATABASE futebol_amigos CHARACTER SET utf8mb4;"
+# cria o banco (ajuste usuário/senha conforme seu PostgreSQL)
+psql -U postgres -c "CREATE DATABASE futebol_amigos;"
 
 # variáveis de ambiente (ou ajuste direto em application.properties)
-export DB_HOST=localhost DB_PORT=3306 DB_NAME=futebol_amigos DB_USER=futebol DB_PASSWORD=sua_senha
+export DB_HOST=localhost DB_PORT=5432 DB_NAME=futebol_amigos DB_USER=futebol DB_PASSWORD=sua_senha
 export ADMIN_EMAIL=admin@exemplo.com ADMIN_SENHA=uma_senha_forte
 
 ./mvnw spring-boot:run      # Linux/macOS
@@ -61,14 +61,28 @@ export ADMIN_EMAIL=admin@exemplo.com ADMIN_SENHA=uma_senha_forte
 
 A aplicação sobe em `http://localhost:8080`.
 
-## Configuração do MySQL
+## Deploy gratuito no Render
 
-A aplicação espera um banco MySQL 8 vazio (as tabelas são criadas automaticamente pelo Flyway no primeiro start). Variáveis de ambiente aceitas (ver `application.properties`):
+O repositório inclui um [`render.yaml`](render.yaml) (Render Blueprint) que provisiona, sem custo e sem cartão de crédito:
+- um **Web Service** free, buildado direto do `Dockerfile` deste repositório;
+- um **PostgreSQL** gerenciado free.
+
+Passos:
+1. No [Render Dashboard](https://dashboard.render.com), **New → Blueprint** e aponte para este repositório (branch `main`).
+2. Render lê o `render.yaml`, cria o banco e o serviço, e já liga as variáveis `DB_*` automaticamente ao banco criado.
+3. Defina manualmente `ADMIN_EMAIL` e `ADMIN_SENHA` nas env vars do Web Service (ficam marcadas `sync: false` no blueprint — não vão para o Git).
+4. Aguarde o build/deploy; a URL pública aparece no painel do serviço.
+
+Limitações do plano free (declaradas com honestidade): o Web Service "dorme" após 15 min sem tráfego (primeira requisição subsequente demora ~30-60s); o banco free do Render expira após 90 dias de existência e precisa ser recriado (não é por inatividade de uso, é por idade).
+
+## Configuração do PostgreSQL
+
+A aplicação espera um banco PostgreSQL 16 vazio (as tabelas são criadas automaticamente pelo Flyway no primeiro start). Variáveis de ambiente aceitas (ver `application.properties`):
 
 | Variável | Padrão | Descrição |
 |---|---|---|
-| `DB_HOST` | `localhost` | Host do MySQL |
-| `DB_PORT` | `3306` | Porta do MySQL |
+| `DB_HOST` | `localhost` | Host do PostgreSQL |
+| `DB_PORT` | `5432` | Porta do PostgreSQL |
 | `DB_NAME` | `futebol_amigos` | Nome do banco |
 | `DB_USER` / `DB_PASSWORD` | `futebol` / `futebol` | Credenciais |
 
