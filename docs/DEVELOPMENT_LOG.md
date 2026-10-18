@@ -91,3 +91,21 @@ Registro cronológico das etapas reais de desenvolvimento. Nada aqui é retroati
 - `Dockerfile`/`compose.yaml` **não executados** nesta sessão (ambiente sem Docker) — validação em máquina com Docker é um próximo passo necessário antes de declarar a via Docker como comprovadamente funcional.
 - Capturas de tela da aplicação ainda não foram produzidas (dependem de execução visual da aplicação, não realizada nesta sessão).
 - Aplicação não publicada em nenhuma hospedagem externa.
+
+---
+
+## Etapa 6 — Entrega
+**Data:** 2026-10-18
+**Objetivo:** validação final de ponta a ponta antes da entrega.
+
+**Validação executada:** `./mvnw.cmd clean verify` (build completo do zero, incluindo testes) → **exit code 0**, 27 testes, 0 falhas, 0 erros, 8 migrations Flyway aplicadas corretamente. Histórico de commits revisado: 7 commits reais e coerentes, cada um com testes passando no momento do commit. Nenhum commit foi forjado; nenhum resultado de teste foi declarado sem execução real.
+
+**Commits (hash, mensagem):**
+1. `aa6c3b8` — `chore: initialize Spring Boot project and planning docs`
+2. `f047bda` — `feat: add domain entities, repositories and Flyway migrations`
+3. `c4d6efb` — `feat: implement authentication and player management`
+4. `e6dc273` — `feat: implement administrator-controlled team draw`
+5. `e05023d` — `feat: add manual payment tracking and WhatsApp charge link`
+6. `45dc823` — `docs: document AI-assisted development workflow`
+
+**Branches e situação do push:** todos os 6 commits estão na branch local `main` e replicados integralmente na branch `feature/bootstrap-projeto`, enviada ao GitHub (`origin/feature/bootstrap-projeto`) com sucesso. `origin/main` **ainda não existe** — o push direto a `main` foi bloqueado pela política de segurança do Kiro Crew (ver `docs/AI_WORKFLOW.md`). Pendente: merge manual de `feature/bootstrap-projeto` para `main` no GitHub.
