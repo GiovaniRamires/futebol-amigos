@@ -132,7 +132,7 @@ public class SorteioService {
 
     @Transactional(readOnly = true)
     public Sorteio buscarPorId(Long id) {
-        return sorteioRepository.findById(id)
+        return sorteioRepository.findByIdComTimesEParticipantes(id)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Sorteio nao encontrado: id " + id));
     }
 
@@ -143,6 +143,6 @@ public class SorteioService {
 
     @Transactional(readOnly = true)
     public Optional<Sorteio> sorteioPublicado(Long partidaId) {
-        return sorteioRepository.findByPartidaIdAndPublicadoTrue(partidaId);
+        return sorteioRepository.findPublicadoComTimesEParticipantesByPartidaId(partidaId);
     }
 }
