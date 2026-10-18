@@ -1,10 +1,12 @@
 package com.futebolamigos.service;
 
+import com.futebolamigos.dto.CadastroPublicoFormDto;
 import com.futebolamigos.dto.JogadorFormDto;
 import com.futebolamigos.dto.UsuarioViewDto;
 import com.futebolamigos.exception.RecursoNaoEncontradoException;
 import com.futebolamigos.exception.RegraNegocioException;
 import com.futebolamigos.model.Perfil;
+import com.futebolamigos.model.TipoJogador;
 import com.futebolamigos.model.Usuario;
 import com.futebolamigos.repository.UsuarioRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -69,6 +71,29 @@ public class UsuarioService {
                 .perfil(Perfil.JOGADOR)
                 .tipoJogador(form.getTipoJogador())
                 .ativo(form.isAtivo())
+                .build();
+        return usuarioRepository.save(usuario);
+    }
+
+    /**
+     * Autocadastro via link publico (/cadastro?token=...). O jogador define
+     * apenas nome, e-mail, telefone e senha; perfil, tipo e ativacao sao
+     * sempre fixos (JOGADOR, AVULSO, ativo) - a promocao a mensalista fica
+     * a cargo do administrador, pois impacta a geracao de cobrancas.
+     */
+    @Transactional
+    public Usuario cadastrarViaLinkPublico(CadastroPublicoFormDto form) {
+        if (usuarioRepository.existsByEmail(form.getEmail())) {
+            throw new RegraNegocioException("Ja existe um usuario cadastrado com este e-mail.");
+        }
+        Usuario usuario = Usuario.builder()
+                .nome(form.getNome())
+                .email(form.getEmail())
+                .telefone(form.getTelefone())
+                .senhaHash(passwordEncoder.encode(form.getSenha()))
+                .perfil(Perfil.JOGADOR)
+                .tipoJogador(TipoJogador.AVULSO)
+                .ativo(true)
                 .build();
         return usuarioRepository.save(usuario);
     }

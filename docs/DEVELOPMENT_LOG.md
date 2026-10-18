@@ -1,3 +1,30 @@
+
+## Etapa 7 — Correções pós-entrega e autocadastro de jogadores
+**Data:** 2026-10-18
+**Objetivo:** corrigir dois defeitos encontrados ao rodar a aplicação localmente (Docker Desktop instalado pelo usuário) e implementar, a pedido do usuário, um link de autocadastro para reduzir o trabalho manual do administrador ao cadastrar mensalistas/avulsos.
+
+**Defeitos corrigidos:**
+- `templates/layout/base.html`: expressão `#httpServletRequest.userPrincipal != null` causava `TemplateInputException` (objeto não exposto nesta configuração de Thymeleaf/Spring 7); removida como redundante, já existia `sec:authorize="isAuthenticated()"` na mesma tag.
+- `LazyInitializationException` ao renderizar nome de usuário (`c.usuario.nome`) fora da sessão Hibernate em `admin/financeiro/lista.html` e, por extensão, em todas as telas que navegam de `ConfirmacaoPresenca`/`SelecaoSorteio`/`Sorteio→Time→ParticipacaoTime` até `Usuario` (relação `@ManyToOne(FetchType.LAZY)`, correta, mas sem fetch explícito nas queries de listagem). Corrigido adicionando `JOIN FETCH` nas queries de `CobrancaRepository`, `ConfirmacaoPresencaRepository`, `SelecaoSorteioRepository` e duas novas queries dedicadas em `SorteioRepository` (fetch em cadeia de `times`→`participacoes`→`usuario`), usadas agora por `SorteioService.buscarPorId`/`sorteioPublicado`.
+
+**Funcionalidade nova — link de autocadastro:**
+- `ConfiguracaoSistema.tokenCadastro` (migration V9): token aleatório (24 bytes via `SecureRandom`, Base64 URL-safe) armazenado na configuração singleton do sistema.
+- `ConfiguracaoSistemaService`: `obterOuGerarTokenCadastro()` (gera na primeira chamada), `regenerarTokenCadastro()` (revoga o link atual), `tokenCadastroValido(token)`.
+- `CadastroPublicoFormDto` + `UsuarioService.cadastrarViaLinkPublico(...)`: novo jogador sempre entra como `JOGADOR`/`AVULSO`/ativo — perfil, tipo e ativação não são escolhas do formulário público; a promoção a mensalista continua sendo decisão exclusiva do administrador (ADR registrada em `docs/DECISIONS.md`).
+- `CadastroPublicoController` (`GET`/`POST /cadastro?token=...`): rota pública (liberada em `SecurityConfig`), valida o token a cada acesso, rejeita token ausente/invalido/revogado.
+- Tela `admin/configuracoes.html`: exibe o link completo (montado a partir da própria requisição, sem host fixo), botão de copiar e botão de regenerar (com confirmação, pois revoga o link atual).
+- Decisão de design (ver seção abaixo): link único reutilizável (não convite individual) — adequado a um grupo pequeno de amigos que já usa WhatsApp como canal de confiança; aprovada e confirmada explicitamente pelo usuário antes da implementação.
+
+**Testes executados (targeted, não a suíte completa — memória do host em estado "tight" durante a sessão):**
+`./mvnw.cmd test "-Dtest=UsuarioServiceTest,ConfiguracaoSistemaServiceTest"` → **9 testes, 0 falhas, 0 erros** (6 em `UsuarioServiceTest`, incluindo os 2 novos casos de `cadastrarViaLinkPublico`; 3 novos em `ConfiguracaoSistemaServiceTest` cobrindo geração/reuso/regeneração/invalidação de token). `./mvnw.cmd compile` também executado isoladamente após as correções de `LazyInitializationException`, antes dos testes, com sucesso.
+
+**Pendências conhecidas:**
+- Suíte completa (`clean verify`, 27+ testes anteriores) **não foi re-executada nesta etapa** devido à memória do host estar limitada durante a sessão — recomenda-se rodá-la antes do próximo commit/deploy para confirmar que nenhuma regressão foi introduzida nas queries alteradas.
+- Não há teste de integração (`MockMvc`) cobrindo o fluxo HTTP completo de `/cadastro` (GET exibindo form, POST com token inválido, POST com e-mail duplicado) — apenas a camada de serviço foi testada diretamente.
+- O link de autocadastro não possui limite de uso nem expiração automática por tempo; a única forma de revogação é a regeneração manual pelo administrador.
+
+---
+
 # Registro de Desenvolvimento (Development Log)
 
 Registro cronológico das etapas reais de desenvolvimento. Nada aqui é retroativamente inventado — cada entrada reflete o que foi efetivamente executado e verificado na sessão correspondente.

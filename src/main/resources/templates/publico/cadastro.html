@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/base}">
+<head>
+    <title>Cadastro</title>
+</head>
+<body>
+<div layout:fragment="conteudo" class="d-flex align-items-center justify-content-center" style="min-height: 80vh;">
+    <div class="card shadow-sm" style="max-width: 420px; width: 100%;">
+        <div class="card-body p-4">
+            <h1 class="h4 mb-3 text-center">⚽ Futebol Amigos</h1>
+            <p class="text-muted text-center small mb-3">Cadastro de jogador</p>
+
+            <div th:if="${tokenInvalido}" class="alert alert-danger py-2">
+                Link de cadastro invalido ou expirado. Peça um link atualizado ao administrador.
+            </div>
+
+            <div th:unless="${tokenInvalido}">
+                <div th:if="${erroNegocio}" class="alert alert-danger py-2" th:text="${erroNegocio}"></div>
+
+                <form th:action="@{/cadastro}" th:object="${form}" method="post">
+                    <input type="hidden" name="token" th:value="${token}">
+
+                    <div class="mb-3">
+                        <label class="form-label">Nome</label>
+                        <input type="text" class="form-control" th:field="*{nome}" required autofocus>
+                        <div class="text-danger small" th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">E-mail</label>
+                        <input type="email" class="form-control" th:field="*{email}" required>
+                        <div class="text-danger small" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Telefone (WhatsApp)</label>
+                        <input type="text" class="form-control" th:field="*{telefone}" placeholder="(11) 91234-5678">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Senha</label>
+                        <input type="password" class="form-control" th:field="*{senha}" required>
+                        <div class="text-danger small" th:if="${#fields.hasErrors('senha')}" th:errors="*{senha}"></div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">Cadastrar</button>
+                </form>
+
+                <p class="text-center small text-muted mt-3 mb-0">
+                    Ja tem conta? <a th:href="@{/login}">Entrar</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

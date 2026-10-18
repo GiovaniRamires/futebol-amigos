@@ -1,5 +1,6 @@
 package com.futebolamigos.service;
 
+import com.futebolamigos.dto.CadastroPublicoFormDto;
 import com.futebolamigos.dto.JogadorFormDto;
 import com.futebolamigos.exception.RegraNegocioException;
 import com.futebolamigos.model.TipoJogador;
@@ -86,5 +87,43 @@ class UsuarioServiceTest {
         assertThatThrownBy(() -> usuarioService.desativar(idUnicoAdmin))
                 .isInstanceOf(RegraNegocioException.class)
                 .hasMessageContaining("administrador");
+    }
+
+    @Test
+    void cadastroViaLinkPublicoEntraSempreComoJogadorAvulsoAtivo() {
+        CadastroPublicoFormDto form = CadastroPublicoFormDto.builder()
+                .nome("Autocadastrado")
+                .email("autocadastrado@example.com")
+                .telefone("11999990000")
+                .senha("senha123")
+                .build();
+
+        var usuario = usuarioService.cadastrarViaLinkPublico(form);
+
+        assertThat(usuario.getId()).isNotNull();
+        assertThat(usuario.getPerfil().name()).isEqualTo("JOGADOR");
+        assertThat(usuario.getTipoJogador()).isEqualTo(TipoJogador.AVULSO);
+        assertThat(usuario.isAtivo()).isTrue();
+        assertThat(usuario.getSenhaHash()).isNotEqualTo("senha123");
+    }
+
+    @Test
+    void cadastroViaLinkPublicoNaoPermiteEmailDuplicado() {
+        CadastroPublicoFormDto primeiro = CadastroPublicoFormDto.builder()
+                .nome("Primeiro Publico")
+                .email("publico.duplicado@example.com")
+                .senha("senha123")
+                .build();
+        usuarioService.cadastrarViaLinkPublico(primeiro);
+
+        CadastroPublicoFormDto duplicado = CadastroPublicoFormDto.builder()
+                .nome("Segundo Publico")
+                .email("publico.duplicado@example.com")
+                .senha("outrasenha")
+                .build();
+
+        assertThatThrownBy(() -> usuarioService.cadastrarViaLinkPublico(duplicado))
+                .isInstanceOf(RegraNegocioException.class)
+                .hasMessageContaining("e-mail");
     }
 }

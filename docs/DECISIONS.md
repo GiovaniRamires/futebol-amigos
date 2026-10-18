@@ -1,3 +1,9 @@
+
+## ADR-010: Link de autocadastro reutilizável, não convite individual por pessoa
+**Decisão:** o autocadastro de jogadores usa um único token reutilizável (`ConfiguracaoSistema.tokenCadastro`), compartilhado pelo administrador via WhatsApp, em vez de um convite único por pessoa.
+**Contexto:** o objetivo explícito do usuário era reduzir o trabalho manual do administrador; convites individuais exigiriam gerar e enviar um link por pessoa, o que contradiria esse objetivo. O grupo é pequeno e já usa WhatsApp como canal de confiança — o mesmo canal que hoje distribui avisos e cobranças manualmente.
+**Consequência:** qualquer pessoa com o link pode se cadastrar enquanto o token não for regenerado; por isso o cadastro via link nunca concede perfil ADMINISTRADOR nem status mensalista automaticamente — o jogador entra sempre como JOGADOR/AVULSO/ativo, e a promoção a mensalista (que implica cobrança recorrente) continua sendo decisão exclusiva do administrador. O administrador pode revogar o link a qualquer momento regenerando o token, invalidando imediatamente o link anterior.
+
 # Decisões Arquiteturais (ADR resumido)
 
 ## ADR-001: Versão do Spring Boot

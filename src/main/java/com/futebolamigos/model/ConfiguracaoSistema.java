@@ -48,4 +48,12 @@ public class ConfiguracaoSistema {
 
     @Column(name = "instrucoes_pagamento", length = 500)
     private String instrucoesPagamento;
+
+    /**
+     * Token do link publico de autocadastro de jogadores (/cadastro?token=...).
+     * Reutilizavel enquanto nao for regenerado pelo administrador; nulo ate a
+     * primeira geracao (ver {@link com.futebolamigos.service.ConfiguracaoSistemaService}).
+     */
+    @Column(name = "token_cadastro", length = 40)
+    private String tokenCadastro;
 }

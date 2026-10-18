@@ -12,6 +12,7 @@
 
             <div th:if="${param.erro}" class="alert alert-danger py-2">E-mail ou senha invalidos.</div>
             <div th:if="${param.logout}" class="alert alert-success py-2">Sessao finalizada.</div>
+            <div th:if="${param.cadastrado}" class="alert alert-success py-2">Cadastro realizado! Entre com seu e-mail e senha.</div>
 
             <form th:action="@{/login}" method="post">
                 <div class="mb-3">

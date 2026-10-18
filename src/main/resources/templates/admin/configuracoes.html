@@ -30,6 +30,33 @@
 
         <button type="submit" class="btn btn-primary">Salvar</button>
     </form>
+
+    <div class="card card-body bg-white mt-4" style="max-width: 480px;">
+        <h2 class="h6 mb-2">Link de autocadastro</h2>
+        <p class="text-muted small mb-2">
+            Compartilhe este link no grupo para que novos jogadores se cadastrem
+            sozinhos (entram como avulsos ativos; voce promove a mensalista depois,
+            se for o caso).
+        </p>
+        <div class="input-group mb-2">
+            <input type="text" class="form-control form-control-sm" th:value="${linkCadastro}" id="linkCadastro" readonly>
+            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="copiarLinkCadastro()">Copiar</button>
+        </div>
+        <form th:action="@{/admin/configuracoes/link-cadastro/regenerar}" method="post">
+            <button type="submit" class="btn btn-outline-danger btn-sm"
+                    onclick="return confirm('O link atual deixara de funcionar. Continuar?');">
+                Gerar novo link (revoga o atual)
+            </button>
+        </form>
+    </div>
+
+    <script th:inline="none">
+        function copiarLinkCadastro() {
+            var campo = document.getElementById('linkCadastro');
+            campo.select();
+            navigator.clipboard.writeText(campo.value);
+        }
+    </script>
 </div>
 </body>
 </html>
