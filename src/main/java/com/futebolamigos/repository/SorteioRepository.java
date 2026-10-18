@@ -15,21 +15,16 @@ public interface SorteioRepository extends JpaRepository<Sorteio, Long> {
     Optional<Sorteio> findByPartidaIdAndPublicadoTrue(Long partidaId);
 
     /**
-     * Carrega o sorteio com times e participantes (usuario) em uma unica
-     * consulta, evitando LazyInitializationException na view ao navegar
-     * sorteio -> times -> participacoes -> usuario fora da sessao Hibernate.
+     * Carrega o sorteio com os times em uma unica consulta. As participacoes
+     * de cada time (e o usuario de cada participacao) sao inicializadas
+     * explicitamente pelo SorteioService, ainda dentro da mesma transacao -
+     * nao e feito aqui num unico JOIN FETCH porque o Hibernate rejeita
+     * (MultipleBagFetchException) buscar duas colecoes (times e
+     * participacoes) ao mesmo tempo quando ambas sao List.
      */
-    @Query("SELECT DISTINCT s FROM Sorteio s " +
-            "LEFT JOIN FETCH s.times t " +
-            "LEFT JOIN FETCH t.participacoes p " +
-            "LEFT JOIN FETCH p.usuario " +
-            "WHERE s.id = :id")
-    Optional<Sorteio> findByIdComTimesEParticipantes(@Param("id") Long id);
+    @Query("SELECT DISTINCT s FROM Sorteio s LEFT JOIN FETCH s.times WHERE s.id = :id")
+    Optional<Sorteio> findByIdComTimes(@Param("id") Long id);
 
-    @Query("SELECT DISTINCT s FROM Sorteio s " +
-            "LEFT JOIN FETCH s.times t " +
-            "LEFT JOIN FETCH t.participacoes p " +
-            "LEFT JOIN FETCH p.usuario " +
-            "WHERE s.partida.id = :partidaId AND s.publicado = true")
-    Optional<Sorteio> findPublicadoComTimesEParticipantesByPartidaId(@Param("partidaId") Long partidaId);
+    @Query("SELECT DISTINCT s FROM Sorteio s LEFT JOIN FETCH s.times WHERE s.partida.id = :partidaId AND s.publicado = true")
+    Optional<Sorteio> findPublicadoComTimesByPartidaId(@Param("partidaId") Long partidaId);
 }
