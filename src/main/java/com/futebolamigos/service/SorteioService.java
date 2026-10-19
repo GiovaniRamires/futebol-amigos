@@ -156,27 +156,38 @@ public class SorteioService {
 
     @Transactional(readOnly = true)
     public List<Sorteio> historicoPorPartida(Long partidaId) {
-        return sorteioRepository.findAllByPartidaIdOrderByCriadoEmDesc(partidaId);
+        List<Sorteio> historico = sorteioRepository.findAllComTimesByPartidaIdOrderByCriadoEmDesc(partidaId);
+        popularParticipacoes(historico);
+        return historico;
     }
 
     @Transactional(readOnly = true)
     public Optional<Sorteio> sorteioPublicado(Long partidaId) {
         Optional<Sorteio> sorteio = sorteioRepository.findPublicadoComTimesByPartidaId(partidaId);
-        sorteio.ifPresent(this::popularParticipacoes);
+        sorteio.ifPresent(s -> popularParticipacoes(List.of(s)));
         return sorteio;
     }
 
-    /** Preenche Time.participacoes (com usuario ja carregado) para cada time do sorteio, numa unica consulta. */
+    /** Preenche Time.participacoes (com usuario ja carregado) para os times de um ou mais sorteios, numa unica consulta em lote. */
     private void popularParticipacoes(Sorteio sorteio) {
-        List<Long> timeIds = sorteio.getTimes().stream().map(Time::getId).toList();
+        popularParticipacoes(List.of(sorteio));
+    }
+
+    private void popularParticipacoes(List<Sorteio> sorteios) {
+        List<Long> timeIds = sorteios.stream()
+                .flatMap(s -> s.getTimes().stream())
+                .map(Time::getId)
+                .toList();
         if (timeIds.isEmpty()) {
             return;
         }
         Map<Long, List<ParticipacaoTime>> porTimeId = participacaoTimeRepository.findAllByTimeIdInComUsuario(timeIds)
                 .stream()
                 .collect(Collectors.groupingBy(p -> p.getTime().getId()));
-        for (Time time : sorteio.getTimes()) {
-            time.setParticipacoes(porTimeId.getOrDefault(time.getId(), new ArrayList<>()));
+        for (Sorteio sorteio : sorteios) {
+            for (Time time : sorteio.getTimes()) {
+                time.setParticipacoes(porTimeId.getOrDefault(time.getId(), new ArrayList<>()));
+            }
         }
     }
 }

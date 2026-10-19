@@ -20,4 +20,7 @@ public interface CobrancaRepository extends JpaRepository<Cobranca, Long> {
 
     @Query("SELECT c FROM Cobranca c JOIN FETCH c.usuario ORDER BY c.vencimento DESC")
     List<Cobranca> findAllByOrderByVencimentoDesc();
+
+    @Query("SELECT c FROM Cobranca c JOIN FETCH c.usuario WHERE c.id = :id")
+    Optional<Cobranca> findByIdComUsuario(@Param("id") Long id);
 }

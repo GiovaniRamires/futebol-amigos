@@ -7,7 +7,7 @@ CREATE TABLE configuracao_sistema (
     chave_pix                       VARCHAR(160),
     nome_beneficiario_pix           VARCHAR(160),
     instrucoes_pagamento            VARCHAR(500)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+);
 
 -- Seed inicial com valores neutros; o administrador ajusta depois pela tela de configuracoes.
 INSERT INTO configuracao_sistema (id, valor_mensalidade, dia_vencimento_mensalidade)

@@ -110,9 +110,9 @@ public class CobrancaService {
         cobrancaRepository.save(cobranca);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Cobranca buscarPorId(Long id) {
-        return cobrancaRepository.findById(id)
+        return cobrancaRepository.findByIdComUsuario(id)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Cobranca nao encontrada: id " + id));
     }
 

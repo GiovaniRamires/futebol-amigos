@@ -1,0 +1,56 @@
+# Render Blueprint: define o Web Service (build via Dockerfile) + banco PostgreSQL gerenciado.
+# Uso: Render Dashboard -> New -> Blueprint -> aponte para este repositorio.
+# Ambos os recursos ficam no plano free (sem cartao de credito exigido).
+# Limitacao do free tier: o Web Service "dorme" apos 15 min sem trafego
+# (a proxima requisicao demora ~30-60s para acordar); o banco free expira
+# apos 90 dias de inatividade de criacao (nao de uso) e precisa ser recriado.
+#
+# Nota sobre a porta: o Render injeta a variavel PORT automaticamente e
+# espera que o processo escute nela. application.properties ja prioriza
+# PORT sobre SERVER_PORT (server.port=${PORT:${SERVER_PORT:8080}}), entao
+# nenhuma variavel de porta precisa ser definida aqui.
+#
+# ADMIN_SENHA: defina manualmente apos o primeiro deploy (Environment do
+# Web Service). Se deixar em branco, a aplicacao gera uma senha aleatoria
+# segura e a imprime UMA UNICA VEZ nos logs do primeiro boot (nunca usa
+# uma senha fraca por padrao).
+
+databases:
+  - name: futebol-amigos-db
+    plan: free
+    databaseName: futebol_amigos
+    user: futebol
+
+services:
+  - type: web
+    name: futebol-amigos
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: DB_HOST
+        fromDatabase:
+          name: futebol-amigos-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: futebol-amigos-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: futebol-amigos-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: futebol-amigos-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: futebol-amigos-db
+          property: password
+      - key: ADMIN_NOME
+        value: Administrador
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_SENHA
+        sync: false
